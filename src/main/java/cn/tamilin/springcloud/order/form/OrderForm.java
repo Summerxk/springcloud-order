@@ -1,8 +1,7 @@
 package cn.tamilin.springcloud.order.form;
 
 import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @ClassName OrderForm

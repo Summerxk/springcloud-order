@@ -1,6 +1,6 @@
 package cn.tamilin.springcloud.order.dataobject;
 
-import cn.tamilin.sell.utils.serializer.Date2LongSerializer;
+import cn.tamilin.springcloud.order.utils.serializer.Date2LongSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 

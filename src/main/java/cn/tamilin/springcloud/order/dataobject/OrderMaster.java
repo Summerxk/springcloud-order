@@ -1,6 +1,7 @@
 package cn.tamilin.springcloud.order.dataobject;
 
 import cn.tamilin.springcloud.order.enums.OrderStatusEnum;
+import cn.tamilin.springcloud.order.enums.PayStatusEnum;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 

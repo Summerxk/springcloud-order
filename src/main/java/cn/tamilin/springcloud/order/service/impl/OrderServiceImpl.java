@@ -1,8 +1,10 @@
 package cn.tamilin.springcloud.order.service.impl;
 
 
+import cn.tamilin.springcloud.order.client.ProductClient;
 import cn.tamilin.springcloud.order.dataobject.OrderDetail;
 import cn.tamilin.springcloud.order.dataobject.OrderMaster;
+import cn.tamilin.springcloud.order.dataobject.ProductInfo;
 import cn.tamilin.springcloud.order.dto.CartDTO;
 import cn.tamilin.springcloud.order.dto.OrderDTO;
 import cn.tamilin.springcloud.order.enums.OrderStatusEnum;
@@ -39,16 +41,42 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderDetailRepository orderDetailRepository;
 
+    @Autowired
+    private ProductClient productClient;
+
     @Override
     public OrderDTO create(OrderDTO orderDTO) {
         BigDecimal orderAmount = new BigDecimal(BigInteger.ZERO);
         String orderId = KeyUtil.genUniquekey();
 
         //TODO 1.查询商品信息 调用商品服务
+        List<String> productIdList = orderDTO.getOrderDetailList()
+                                            .stream()
+                                            .map(OrderDetail::getProductId)
+                                            .collect(Collectors.toList());
+        List<ProductInfo> productInfoList = productClient.listForOrder(productIdList);
         //TODO 2.计算订单金额
-        //TODO 3.保存订单详情
+		for (OrderDetail orderDetail : orderDTO.getOrderDetailList()) {
+            for(ProductInfo productInfo : productInfoList) {
+                if(productInfo.getProductId().equals(orderDetail.getProductId())) {
+                    // 单价 * 数量
+					orderAmount = productInfo.getProductPrice().multiply(new BigDecimal(orderDetail.getProductQuantity())).add(orderAmount);
+					BeanUtils.copyProperties(productInfo, orderDetail);
+					orderDetail.setOrderId(orderId);
+					orderDetail.setDetailId(KeyUtil.genUniquekey());
+					//TODO 3.保存订单详情
+					orderDetailRepository.save(orderDetail);
+                }
+            }
+        }
+		//TODO 4.下单成功扣库存
+		List<CartDTO> cartDTOList = orderDTO.getOrderDetailList().stream().map(e ->
+			new CartDTO(e.getProductId(), e.getProductQuantity())
+		).collect(Collectors.toList());
+		productClient.decreaseStock(cartDTOList);
 
-        //4.保存订单
+
+        //TODO 5.保存订单
         OrderMaster orderMaster = new OrderMaster();
         BeanUtils.copyProperties(orderDTO, orderMaster);
         orderMaster.setOrderId(orderId);
@@ -57,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
         orderMaster.setPayStatus(PayStatusEnum.SUCESS.getCode());
         orderMasterRepository.save(orderMaster);
 
-        //TODO 5.下单成功扣库存
+
         return orderDTO;
     }
 
