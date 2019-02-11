@@ -130,6 +130,12 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
         <!--mq end-->
+        <!--spring cloud stream rabbit start-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+        </dependency>
+        <!--spring cloud stream rabbit end-->
     </dependencies>
 
     <dependencyManagement>
