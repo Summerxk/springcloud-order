@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: order
+#  datasource:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    username: root
+#    password: 123456
+#    url: jdbc:mysql://39.105.43.68:3306/sell?characterEncoding=utf-8&useSSL=false  这里在config项目中进行了配置
+  jpa:
+    show-sql: true
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: CONFIG #通过config服务进行配置文件的加载
+      profile: test
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://127.0.0.1:8761/eureka/
+
+# application.xml 重命名为 bootstrap.xml 让这边的配置先进行启动
