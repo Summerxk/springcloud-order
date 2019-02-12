@@ -146,6 +146,12 @@
             <artifactId>spring-cloud-starter-hystrix</artifactId>
         </dependency>
         <!--hystrix end-->
+        <!--&lt;!&ndash;hystrix dashboard start&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.cloud</groupId>-->
+            <!--<artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash;hystrix dashboard end&ndash;&gt;-->
     </dependencies>
 
     <dependencyManagement>
