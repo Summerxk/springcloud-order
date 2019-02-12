@@ -19,6 +19,16 @@ spring:
         myMessage:
           group: order #配置spring cloud stream 分组 多个实例启动的时候， 多个实例公用一个队列 消息消费完不会重复多个实例消费
           content-type: application/json # 在传输对象的时候 在mq中显示的是序列化之后的json串 这样在消息堆积的时候 可以看一下
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 2000
+feign:
+  hystrix:
+    enabled: true
 #eureka:
 #  client:
 #    service-url:
