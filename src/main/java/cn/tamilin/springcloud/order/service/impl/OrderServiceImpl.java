@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -45,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     private ProductClient productClient;
 
     @Override
+    @Transactional // 在订单入库的时候 加个这个单单数据库的话 可以这样使用 但是 redis不会回滚 所以要手动回滚
     public OrderDTO create(OrderDTO orderDTO) {
         BigDecimal orderAmount = new BigDecimal(BigInteger.ZERO);
         String orderId = KeyUtil.genUniquekey();
@@ -55,6 +57,9 @@ public class OrderServiceImpl implements OrderService {
                                             .map(OrderDetail::getProductId)
                                             .collect(Collectors.toList());
         List<ProductInfo> productInfoList = productClient.listForOrder(productIdList);
+        // 读redis
+        // 减库存并将值重新设置进redis 这里用redis的分布式锁 因为涉及到多线程
+        // 数据库订单入库异常 需要手动回滚redis 可以加try catche
         //TODO 2.计算订单金额
 		for (OrderDetail orderDetail : orderDTO.getOrderDetailList()) {
             for(ProductInfo productInfo : productInfoList) {
